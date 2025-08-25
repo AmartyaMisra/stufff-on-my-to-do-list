@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="20" fill="#0b1020"/>
+  <g transform="translate(64,64)">
+    <!-- Airplane silhouette -->
+    <path d="M-40,-20 L-20,-20 L-10,-30 L10,-30 L20,-20 L40,-20 L45,-15 L45,15 L40,20 L20,20 L10,30 L-10,30 L-20,20 L-40,20 L-45,15 L-45,-15 Z" fill="#ff6b6b" stroke="white" stroke-width="2"/>
+    <!-- Windows -->
+    <circle cx="-15" cy="0" r="3" fill="white"/>
+    <circle cx="15" cy="0" r="3" fill="white"/>
+    <!-- Tail -->
+    <path d="M-45,-15 L-55,-25 L-55,-15 L-45,-15 Z" fill="#ff6b6b" stroke="white" stroke-width="1"/>
+    <path d="M-45,15 L-55,25 L-55,15 L-45,15 Z" fill="#ff6b6b" stroke="white" stroke-width="1"/>
+  </g>
+</svg>

@@ -1,0 +1,60 @@
+:root {
+  --bg: #0b1020;
+  --panel: #121a33;
+  --text: #e6ebff;
+  --muted: #93a1c6;
+  --accent: #6aa5ff;
+  --accent2: #67e8f9;
+  --danger: #ff6b6b;
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; background: #0b1020; color: #cfe3ff; }
+.app { display: flex; flex-direction: column; height: 100%; }
+.controlbar { padding: 8px 12px; background: #101c34; border-bottom: 1px solid #1e2b4a; }
+.layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100% - 42px); }
+.map { height: 100%; }
+.atc { padding: 12px; background: #0f1730; border-left: 1px solid #1e2b4a; overflow: auto; }
+.atc a { color: #89b4ff; }
+h1, h2, h3 { margin: 0; }
+.app-shell{display:flex;flex-direction:column;height:100vh;background:#0b1020;color:#e5e9f0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #1b2138;background:linear-gradient(180deg,#0f162e,#0b1020)}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e}
+.title{font-weight:600;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{background:#1b2138;color:#a3b1c6;border:1px solid #29324d;padding:2px 8px;border-radius:999px;font-size:12px;margin-left:6px}
+.badge.green{background:#15341f;color:#7ce38b;border-color:#1f4d2b}
+.controls{display:flex;gap:8px}
+.btn{background:#1b2138;color:#e5e9f0;border:1px solid #29324d;padding:6px 10px;border-radius:6px;cursor:pointer}
+.btn.small{padding:4px 8px;font-size:12px}
+.content{flex:1;display:grid;grid-template-columns:minmax(260px,320px) 1fr minmax(320px,380px);gap:0;height:calc(100vh - 44px);min-width:0}
+.sidebar,.rightbar{overflow:auto;border-right:1px solid #1b2138}
+.sidebar{min-width:260px}
+.rightbar{border-left:1px solid #1b2138;min-width:320px}
+.maparea{position:relative;min-width:0}
+.leaflet-container { height: 100%; }
+.card{padding:12px;border-bottom:1px solid #1b2138}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px;color:#a3b1c6;min-width:0}
+.footer-note{margin-top:8px;color:#7b879a;font-size:12px}
+.settings .row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.settings label{display:block;font-size:12px;color:#9fb0c4;margin-bottom:4px}
+.settings input,.settings select{background:#0f1527;color:#e5e9f0;border:1px solid #29324d;border-radius:6px;padding:6px 8px;min-width:0}
+
+.flight-sidebar{display:flex;flex-direction:column;height:100%;background:#0b1020}
+.panel{border-bottom:1px solid #1b2138}
+.panel-header{padding:10px 12px;font-weight:600;color:#c5d1e1;background:#0f162e;border-bottom:1px solid #1b2138}
+.panel-controls{padding:8px 12px}
+.panel-controls input{width:100%;background:#0f1527;color:#e5e9f0;border:1px solid #29324d;border-radius:6px;padding:6px 8px}
+.flight-list{max-height:240px;overflow:auto}
+.flight-row{padding:8px 12px;border-bottom:1px solid #11162a;cursor:pointer}
+.flight-row:hover{background:#0f162e}
+.flight-row.sel{background:#111c34}
+.f-callsign{font-weight:600}
+.f-meta{font-size:12px;color:#9fb0c4}
+.details{padding:10px 12px}
+.muted{color:#6e7c93}
+.chat{display:flex;flex-direction:column;height:240px}
+.chat-messages{flex:1;overflow:auto;padding:8px 12px}
+.chat-msg{font-size:12px;margin-bottom:6px}
+.chat-msg .ts{color:#7b879a;margin-right:6px}
+.chat-input{display:flex;gap:6px;padding:8px 12px;border-top:1px solid #1b2138}
+.chat-input input{flex:1;background:#0f1527;color:#e5e9f0;border:1px solid #29324d;border-radius:6px;padding:6px 8px}
