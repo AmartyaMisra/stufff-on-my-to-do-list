@@ -1,0 +1,59 @@
+What’s missing / weak
+
+Event timeline is blank
+Right now it’s just a black box. Needs mock data + visualization (bars, dots, heatmap). Even if fake, must “move.”
+
+Entity panel is barren
+“No entity selected” is too empty. You want a placeholder card with risk gauge, dummy attributes, and expandable evidence.
+→ Otherwise users feel like nothing works.
+
+No visual graph
+Analysts expect at least a node-link ego view. Even a small cytoscape.js canvas showing one node connected to “dummy IP / dummy txn” would instantly elevate.
+
+Evidence chain missing
+Right now it says “explainable evidence chains” in the description, but UI doesn’t show SHAP values, keywords, or “top signals.” That’s the magic sauce.
+
+Aesthetic polish
+Buttons are okay, but inconsistent: CSV = light blue, Pause = yellow, Filters = dark grey. Needs unified palette (e.g., neon cyan primary, amber secondary, red for critical).
+
+🔮 How to evolve this
+
+Here’s how I’d stage improvements (still within semi-AI / no money constraints):
+
+Step 1 — Fake it ’til you make it (UI realism boost):
+
+Populate timeline with synthetic mock alerts every 5 seconds:
+
+“2025-09-06 12:45 — Suspicious login spike from RU IP range”
+
+“2025-09-06 12:46 — NLP flagged phrase ‘detonate package’”
+
+Color-coded badges (Critical, High, Medium).
+
+Step 2 — Evidence & graph:
+
+When you click an alert, right panel should expand with:
+
+Risk gauge (progress circle 0–100).
+
+Top evidence tokens highlighted in red (“detonate”, “package”).
+
+Tiny ego-graph: node = user, edges = IP, event, keyword.
+
+Step 3 — Semi-AI scoring (lightweight, free):
+
+Backend:
+
+sentence-transformers/all-MiniLM-L6-v2 for embeddings.
+
+scikit-learn LogisticRegression on toy labeled set (violent / neutral).
+
+Return probability + tokens → UI displays it as risk + highlights.
+
+Step 4 — Aesthetic refinement:
+
+Palette: base black → neon cyan highlights, amber warnings, red critical.
+
+Animations: when new alert comes, it should “blink in” for half a second, then settle.
+
+Microcopy: no empty states. Always show something, even fake filler like “System is awaiting data — last sync at 12:44.”

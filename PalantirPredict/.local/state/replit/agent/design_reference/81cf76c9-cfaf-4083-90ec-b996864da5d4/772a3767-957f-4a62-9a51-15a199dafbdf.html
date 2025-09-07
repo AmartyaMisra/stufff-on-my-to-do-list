@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Intelligence Portal - Cyber Operations Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        card: {
+                            DEFAULT: "var(--card)",
+                            foreground: "var(--card-foreground)",
+                        },
+                        popover: {
+                            DEFAULT: "var(--popover)",
+                            foreground: "var(--popover-foreground)",
+                        },
+                        primary: {
+                            DEFAULT: "var(--primary)",
+                            foreground: "var(--primary-foreground)",
+                        },
+                        secondary: {
+                            DEFAULT: "var(--secondary)",
+                            foreground: "var(--secondary-foreground)",
+                        },
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)",
+                        },
+                        accent: {
+                            DEFAULT: "var(--accent)",
+                            foreground: "var(--accent-foreground)",
+                        },
+                        destructive: {
+                            DEFAULT: "var(--destructive)",
+                            foreground: "var(--destructive-foreground)",
+                        },
+                        border: "var(--border)",
+                        input: "var(--input)",
+                        ring: "var(--ring)",
+                        chart: {
+                            "1": "var(--chart-1)",
+                            "2": "var(--chart-2)",
+                            "3": "var(--chart-3)",
+                            "4": "var(--chart-4)",
+                            "5": "var(--chart-5)",
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["var(--font-sans)"],
+                        serif: ["var(--font-serif)"],
+                        mono: ["var(--font-mono)"],
+                    }
+                },
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    
+    <style>
+        :root {
+            --radius: 0.5rem;
+            --background: hsl(0 0% 4%);
+            --foreground: hsl(0 0% 98%);
+            --card: hsl(0 0% 6%);
+            --card-foreground: hsl(0 0% 95%);
+            --popover: hsl(0 0% 6%);
+            --popover-foreground: hsl(0 0% 95%);
+            --primary: hsl(195 100% 50%);
+            --primary-foreground: hsl(0 0% 9%);
+            --secondary: hsl(43 96% 56%);
+            --secondary-foreground: hsl(0 0% 9%);
+            --muted: hsl(217 19% 15%);
+            --muted-foreground: hsl(215 13% 65%);
+            --accent: hsl(142 76% 36%);
+            --accent-foreground: hsl(0 0% 98%);
+            --destructive: hsl(0 84% 60%);
+            --destructive-foreground: hsl(0 0% 98%);
+            --border: hsl(217 19% 15%);
+            --input: hsl(217 19% 15%);
+            --ring: hsl(195 100% 50%);
+            --chart-1: hsl(195 100% 50%);
+            --chart-2: hsl(43 96% 56%);
+            --chart-3: hsl(142 76% 36%);
+            --chart-4: hsl(24 100% 59%);
+            --chart-5: hsl(0 84% 60%);
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * {
+            border-color: hsl(var(--border));
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: hsl(var(--muted));
+            stroke-width: 8;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke: hsl(var(--primary));
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease-in-out;
+        }
+
+        .timeline-node {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-node:hover {
+            stroke-width: 3;
+        }
+
+        .evidence-token {
+            background: hsl(var(--secondary) / 0.2);
+            color: hsl(var(--secondary));
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+
+        .entity-node {
+            transition: all 0.3s ease;
+        }
+
+        .entity-node:hover {
+            transform: scale(1.1);
+        }
+
+        .scrollbar-thin {
+            scrollbar-width: thin;
+            scrollbar-color: hsl(var(--muted)) transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: hsl(var(--muted));
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground overflow-hidden">
+    <!-- @COMPONENT: Dashboard Layout -->
+    <div class="h-screen flex">
+        <!-- @COMPONENT: LeftSidebar [controls and filters] -->
+        <div class="w-80 bg-card border-r border-border flex flex-col">
+            <!-- Header -->
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-primary-foreground text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold">Intelligence Portal</h1>
+                        <p class="text-xs text-muted-foreground">Predictive Analytics</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Ingestion Controls -->
+            <div class="p-4 border-b border-border">
+                <h3 class="text-sm font-medium mb-3">Data Ingestion</h3>
+                <div class="space-y-2">
+                    <button class="w-full bg-primary text-primary-foreground py-2 px-3 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                        <i class="fas fa-upload mr-2"></i>Upload CSV Data
+                    </button>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-muted text-muted-foreground py-2 px-3 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                            <i class="fas fa-rss mr-1"></i>RSS
+                        </button>
+                        <button class="flex-1 bg-muted text-muted-foreground py-2 px-3 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                            <i class="fas fa-database mr-1"></i>API
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="p-4 border-b border-border">
+                <h3 class="text-sm font-medium mb-3">Filters</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs text-muted-foreground mb-1 block">Risk Level</label>
+                        <select class="w-full bg-input border border-border rounded-md px-3 py-2 text-sm">
+                            <option>All Levels</option>
+                            <option>Critical (90-100)</option>
+                            <option>High (70-89)</option>
+                            <option>Medium (40-69)</option>
+                            <option>Low (0-39)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-muted-foreground mb-1 block">Time Range</label>
+                        <select class="w-full bg-input border border-border rounded-md px-3 py-2 text-sm">
+                            <option>Last 24 Hours</option>
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-muted-foreground mb-1 block">Event Type</label>
+                        <select class="w-full bg-input border border-border rounded-md px-3 py-2 text-sm">
+                            <option>All Types</option>
+                            <option>Network Anomaly</option>
+                            <option>Text Analysis</option>
+                            <option>Transaction Pattern</option>
+                            <option>Behavioral Change</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Queue -->
+            <div class="flex-1 p-4 overflow-hidden">
+                <h3 class="text-sm font-medium mb-3">Alert Queue</h3>
+                <div class="space-y-2 scrollbar-thin overflow-y-auto h-full">
+                    <!-- High Priority Alert -->
+                    <div class="bg-destructive/10 border border-destructive/30 rounded-lg p-3 cursor-pointer hover:bg-destructive/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs bg-destructive text-destructive-foreground px-2 py-1 rounded">CRITICAL</span>
+                            <span class="text-xs text-muted-foreground">2m ago</span>
+                        </div>
+                        <p class="text-sm font-medium mb-1">Coordinated Network Activity</p>
+                        <p class="text-xs text-muted-foreground">Multiple IPs, unusual patterns detected</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs text-destructive font-medium">Risk: 94</span>
+                            <span class="text-xs text-muted-foreground">Entity: #7A2F3B</span>
+                        </div>
+                    </div>
+
+                    <!-- Medium Priority Alert -->
+                    <div class="bg-secondary/10 border border-secondary/30 rounded-lg p-3 cursor-pointer hover:bg-secondary/15 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">HIGH</span>
+                            <span class="text-xs text-muted-foreground">15m ago</span>
+                        </div>
+                        <p class="text-sm font-medium mb-1">Sentiment Surge Detected</p>
+                        <p class="text-xs text-muted-foreground">Unusual social media activity spike</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs text-secondary font-medium">Risk: 78</span>
+                            <span class="text-xs text-muted-foreground">Entity: #4E8B9F</span>
+                        </div>
+                    </div>
+
+                    <!-- Low Priority Alert -->
+                    <div class="bg-muted/30 border border-muted rounded-lg p-3 cursor-pointer hover:bg-muted/40 transition-colors">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">MEDIUM</span>
+                            <span class="text-xs text-muted-foreground">1h ago</span>
+                        </div>
+                        <p class="text-sm font-medium mb-1">Behavioral Anomaly</p>
+                        <p class="text-xs text-muted-foreground">New device access pattern</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs text-muted-foreground font-medium">Risk: 45</span>
+                            <span class="text-xs text-muted-foreground">Entity: #9C3E7A</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LeftSidebar -->
+
+        <!-- @COMPONENT: MainContent [timeline and analysis] -->
+        <div class="flex-1 flex flex-col">
+            <!-- Top Bar -->
+            <div class="bg-card border-b border-border p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <h2 class="text-lg font-medium">Live Intelligence Feed</h2>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+                        <span class="text-sm text-muted-foreground">Real-time monitoring active</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="bg-muted text-muted-foreground px-3 py-2 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                        <i class="fas fa-pause mr-2"></i>Pause
+                    </button>
+                    <button class="bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                        <i class="fas fa-play mr-2"></i>Replay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timeline Visualization -->
+            <div class="bg-card border-b border-border p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium">Event Timeline</h3>
+                    <div class="text-xs text-muted-foreground">Last 24 Hours</div>
+                </div>
+                <div class="relative h-24 bg-background rounded-lg overflow-hidden">
+                    <svg id="timeline" class="w-full h-full"></svg>
+                    <!-- Timeline scrubber -->
+                    <div class="absolute bottom-2 left-4 right-4 h-1 bg-muted rounded-full">
+                        <div class="absolute left-0 w-8 h-3 -top-1 bg-primary rounded cursor-pointer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Feed -->
+            <div class="flex-1 p-4 overflow-hidden">
+                <div class="space-y-3 scrollbar-thin overflow-y-auto h-full" data-mock="true">
+                    <!-- Critical Event -->
+                    <div class="bg-card rounded-lg p-4 border border-destructive/30 hover:bg-card/80 transition-colors cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-destructive text-destructive-foreground px-2 py-1 rounded text-xs font-medium">CRITICAL</span>
+                                <span class="text-sm font-mono text-muted-foreground">14:23:17 UTC</span>
+                            </div>
+                            <span class="text-xl font-bold text-destructive">94</span>
+                        </div>
+                        <h4 class="text-sm font-medium mb-2">Coordinated Network Activity Detected</h4>
+                        <p class="text-sm text-muted-foreground mb-3">Multiple IP addresses from different geographic regions accessing the same resource within a 2-minute window. Pattern suggests potential <span class="evidence-token">distributed attack</span> coordination.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-muted-foreground">
+                                Entities: <span class="text-primary">#7A2F3B</span>, <span class="text-primary">#4E8B9F</span>, <span class="text-primary">#9C3E7A</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted-foreground"></i>
+                        </div>
+                    </div>
+
+                    <!-- High Priority Event -->
+                    <div class="bg-card rounded-lg p-4 border border-secondary/30 hover:bg-card/80 transition-colors cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs font-medium">HIGH</span>
+                                <span class="text-sm font-mono text-muted-foreground">14:08:42 UTC</span>
+                            </div>
+                            <span class="text-xl font-bold text-secondary">78</span>
+                        </div>
+                        <h4 class="text-sm font-medium mb-2">Sentiment Analysis Alert</h4>
+                        <p class="text-sm text-muted-foreground mb-3">Unusual spike in negative sentiment detected across social media feeds. Keywords include <span class="evidence-token">protest</span>, <span class="evidence-token">disruption</span>, and <span class="evidence-token">coordinate</span>.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-muted-foreground">
+                                Source: Social Media API • Entity: <span class="text-primary">#4E8B9F</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted-foreground"></i>
+                        </div>
+                    </div>
+
+                    <!-- Medium Priority Event -->
+                    <div class="bg-card rounded-lg p-4 border border-muted hover:bg-card/80 transition-colors cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-medium">MEDIUM</span>
+                                <span class="text-sm font-mono text-muted-foreground">13:45:18 UTC</span>
+                            </div>
+                            <span class="text-xl font-bold text-muted-foreground">45</span>
+                        </div>
+                        <h4 class="text-sm font-medium mb-2">Device Access Pattern Change</h4>
+                        <p class="text-sm text-muted-foreground mb-3">New device detected accessing account after 30-day dormancy period. Location: <span class="evidence-token">Frankfurt, DE</span> (previous: New York, US).</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-muted-foreground">
+                                Entity: <span class="text-primary">#9C3E7A</span> • Confidence: 67%
+                            </div>
+                            <i class="fas fa-chevron-right text-muted-foreground"></i>
+                        </div>
+                    </div>
+
+                    <!-- Low Priority Event -->
+                    <div class="bg-card rounded-lg p-4 border border-border hover:bg-card/80 transition-colors cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-accent/20 text-accent px-2 py-1 rounded text-xs font-medium">LOW</span>
+                                <span class="text-sm font-mono text-muted-foreground">13:22:55 UTC</span>
+                            </div>
+                            <span class="text-xl font-bold text-muted-foreground">23</span>
+                        </div>
+                        <h4 class="text-sm font-medium mb-2">Transaction Volume Anomaly</h4>
+                        <p class="text-sm text-muted-foreground mb-3">Daily transaction volume 15% higher than 7-day average. No clear pattern identified, but monitoring continued.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-muted-foreground">
+                                Entity: <span class="text-primary">#A5B2C3</span> • ML Model: Isolation Forest
+                            </div>
+                            <i class="fas fa-chevron-right text-muted-foreground"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+
+        <!-- @COMPONENT: RightPanel [entity profile and analysis] -->
+        <div class="w-80 bg-card border-l border-border flex flex-col">
+            <!-- Entity Header -->
+            <div class="p-4 border-b border-border">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-medium">Entity Profile</h3>
+                    <button class="text-muted-foreground hover:text-foreground text-sm">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-destructive/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-destructive"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-sm" data-bind="entity.id">#7A2F3B</h4>
+                        <p class="text-xs text-muted-foreground">High-risk entity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Gauge -->
+            <div class="p-4 border-b border-border">
+                <h4 class="text-sm font-medium mb-3">Risk Assessment</h4>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="gauge-container">
+                        <svg width="120" height="120">
+                            <circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
+                            <circle cx="60" cy="60" r="50" class="gauge-fill" 
+                                stroke="hsl(var(--destructive))"
+                                stroke-dasharray="235 314" 
+                                stroke-dashoffset="0" 
+                                transform="rotate(-90 60 60)"></circle>
+                            <text x="60" y="70" text-anchor="middle" class="text-2xl font-bold fill-destructive">94</text>
+                        </svg>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-muted-foreground">Confidence</span>
+                                <span class="font-medium">87%</span>
+                            </div>
+                        </div>
+                        <div class="text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-muted-foreground">Last Updated</span>
+                                <span class="font-medium">2m ago</span>
+                            </div>
+                        </div>
+                        <div class="text-xs">
+                            <div class="flex justify-between">
+                                <span class="text-muted-foreground">Events</span>
+                                <span class="font-medium">847</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Evidence -->
+            <div class="p-4 border-b border-border">
+                <h4 class="text-sm font-medium mb-3">Key Evidence</h4>
+                <div class="space-y-3">
+                    <div class="bg-background rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs text-muted-foreground">Network Behavior</span>
+                            <span class="text-xs font-medium text-destructive">+42</span>
+                        </div>
+                        <p class="text-sm">Coordinated access from 12 distinct IP addresses</p>
+                        <div class="mt-2 flex items-center text-xs text-muted-foreground">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>14:23:17 UTC</span>
+                        </div>
+                    </div>
+                    <div class="bg-background rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs text-muted-foreground">Text Analysis</span>
+                            <span class="text-xs font-medium text-secondary">+28</span>
+                        </div>
+                        <p class="text-sm">Keywords: <span class="evidence-token">attack</span>, <span class="evidence-token">coordinate</span></p>
+                        <div class="mt-2 flex items-center text-xs text-muted-foreground">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>14:20:03 UTC</span>
+                        </div>
+                    </div>
+                    <div class="bg-background rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs text-muted-foreground">Graph Analysis</span>
+                            <span class="text-xs font-medium text-secondary">+18</span>
+                        </div>
+                        <p class="text-sm">Central node in suspicious cluster</p>
+                        <div class="mt-2 flex items-center text-xs text-muted-foreground">
+                            <i class="fas fa-clock mr-1"></i>
+                            <span>14:15:42 UTC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entity Graph -->
+            <div class="p-4 border-b border-border">
+                <h4 class="text-sm font-medium mb-3">Relationship Graph</h4>
+                <div class="bg-background rounded-lg h-48 relative overflow-hidden">
+                    <div id="entity-graph" class="w-full h-full"></div>
+                    <div class="absolute top-2 right-2">
+                        <button class="bg-muted text-muted-foreground p-1 rounded text-xs hover:bg-muted/80">
+                            <i class="fas fa-expand-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyst Actions -->
+            <div class="flex-1 p-4">
+                <h4 class="text-sm font-medium mb-3">Analyst Actions</h4>
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="bg-accent text-accent-foreground py-2 px-3 rounded-md text-sm font-medium hover:bg-accent/90 transition-colors">
+                            <i class="fas fa-check mr-2"></i>Confirm
+                        </button>
+                        <button class="bg-muted text-muted-foreground py-2 px-3 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                            <i class="fas fa-times mr-2"></i>Dismiss
+                        </button>
+                    </div>
+                    <button class="w-full bg-secondary text-secondary-foreground py-2 px-3 rounded-md text-sm font-medium hover:bg-secondary/90 transition-colors">
+                        <i class="fas fa-arrow-up mr-2"></i>Escalate
+                    </button>
+                    <div class="mt-4">
+                        <label class="text-xs text-muted-foreground mb-2 block">Analyst Notes</label>
+                        <textarea class="w-full bg-input border border-border rounded-md px-3 py-2 text-sm resize-none h-20" placeholder="Add investigation notes..."></textarea>
+                    </div>
+                    <div class="text-xs text-muted-foreground mt-4">
+                        <div class="flex justify-between">
+                            <span>Reviewed by:</span>
+                            <span class="font-medium">Analyst_007</span>
+                        </div>
+                        <div class="flex justify-between mt-1">
+                            <span>Session ID:</span>
+                            <span class="font-mono">#S-2024-001</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: RightPanel -->
+    </div>
+    <!-- @END_COMPONENT: Dashboard Layout -->
+
+    <script>
+        // Initialize Timeline Visualization
+        (function initTimeline() {
+            const svg = d3.select("#timeline");
+            const width = svg.node().getBoundingClientRect().width;
+            const height = svg.node().getBoundingClientRect().height;
+            
+            const events = [
+                { time: 0.2, risk: 23, type: 'low' },
+                { time: 0.35, risk: 45, type: 'medium' },
+                { time: 0.6, risk: 78, type: 'high' },
+                { time: 0.85, risk: 94, type: 'critical' }
+            ];
+            
+            const colorMap = {
+                low: 'hsl(var(--accent))',
+                medium: 'hsl(var(--muted-foreground))',
+                high: 'hsl(var(--secondary))',
+                critical: 'hsl(var(--destructive))'
+            };
+            
+            events.forEach(event => {
+                svg.append('circle')
+                   .attr('cx', event.time * width)
+                   .attr('cy', height / 2)
+                   .attr('r', Math.max(4, event.risk / 10))
+                   .attr('fill', colorMap[event.type])
+                   .attr('class', 'timeline-node')
+                   .on('click', function() {
+                       // TODO: Implement event detail view
+                       console.log('Event clicked:', event);
+                   });
+            });
+        })();
+        
+        // Initialize Entity Graph
+        (function initEntityGraph() {
+            const cy = cytoscape({
+                container: document.getElementById('entity-graph'),
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': 'hsl(var(--primary))',
+                            'label': 'data(id)',
+                            'text-valign': 'center',
+                            'color': 'hsl(var(--foreground))',
+                            'font-size': '10px',
+                            'width': '20px',
+                            'height': '20px'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'line-color': 'hsl(var(--border))',
+                            'width': 2
+                        }
+                    },
+                    {
+                        selector: '.high-risk',
+                        style: {
+                            'background-color': 'hsl(var(--destructive))'
+                        }
+                    }
+                ],
+                elements: [
+                    { data: { id: '7A2F3B' }, classes: 'high-risk' },
+                    { data: { id: '4E8B9F' } },
+                    { data: { id: '9C3E7A' } },
+                    { data: { id: 'A5B2C3' } },
+                    { data: { source: '7A2F3B', target: '4E8B9F' } },
+                    { data: { source: '7A2F3B', target: '9C3E7A' } },
+                    { data: { source: '4E8B9F', target: 'A5B2C3' } }
+                ],
+                layout: {
+                    name: 'circle',
+                    radius: 60
+                }
+            });
+            
+            cy.on('tap', 'node', function(evt) {
+                // TODO: Implement node selection and detail view
+                console.log('Node selected:', evt.target.id());
+            });
+        })();
+        
+        // Initialize Risk Gauge Animation
+        (function initGauges() {
+            const gauges = document.querySelectorAll('.gauge-fill');
+            gauges.forEach(gauge => {
+                const risk = 94; // This would come from data
+                const circumference = 2 * Math.PI * 50; // radius = 50
+                const offset = circumference - (risk / 100) * circumference;
+                gauge.style.strokeDasharray = `${circumference}`;
+                gauge.style.strokeDashoffset = offset;
+            });
+        })();
+        
+        // Simulate real-time updates
+        (function simulateRealTimeUpdates() {
+            setInterval(() => {
+                // TODO: Implement WebSocket connection for real-time data
+                // This would update the timeline, alerts, and risk scores
+                console.log('Checking for new data...');
+            }, 5000);
+        })();
+        
+        // Privacy and Ethics Compliance Logger
+        (function initComplianceLogging() {
+            // TODO: Implement audit logging for all user interactions
+            // This ensures compliance with privacy regulations
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('button') || e.target.closest('.cursor-pointer')) {
+                    // Log user interaction for audit trail
+                    console.log('User interaction logged:', {
+                        timestamp: new Date().toISOString(),
+                        action: 'click',
+                        element: e.target.textContent?.trim() || e.target.className,
+                        user: 'Analyst_007', // This would be actual user ID
+                        sessionId: 'S-2024-001'
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

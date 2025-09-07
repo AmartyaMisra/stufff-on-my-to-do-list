@@ -1,0 +1,233 @@
+T10 — Mission Brief: “Palantir-Style Predictive Intelligence (Ethical, Deployable, Aesthetic)”
+
+Topline: Build a deployable, aesthetic predictive intelligence portal that fuses text, events, and metadata to forecast riskable events & anomalous scenarios (network attacks, coordinated fraud, supply-chain disruption, sentiment surges), not to predict individual criminality. Must be human-in-the-loop, privacy-preserving, and runnable with free/open-source tools. Deliver as docker-compose up (single command) and a polished web UI.
+
+1) Mission & Non-negotiables
+
+Purpose: Predict events/risks and surface explainable evidence (signals, network patterns, timelines), to assist analysts — NOT to autonomously accuse people or perform surveillance on private individuals.
+
+Ethics: Data must be anonymized/aggregated. Any flagged item always requires human review. Conform to local laws (GDPR/CCPA style) and include audit logs and opt-out provisions.
+
+Single-command run: docker-compose up or ./run.sh starts backend + frontend + DB locally.
+
+Stack preference: Free/open-source only (Postgres/SQLite, Neo4j or NetworkX, FastAPI, PyTorch/Transformers, scikit-learn, React + Tailwind/D3).
+
+2) Data Model & Ingest (what to collect, how to store)
+
+Acceptable sources (examples):
+
+Public web crawls / open feeds (news, RSS), public social media APIs (rate-limited), OSINT sources, internal logs (network/transaction logs) — only if consent/legality verified.
+
+Avoid raw personal PII ingestion. Hash or drop direct identifiers; use pseudonymous entity IDs.
+
+Schema (examples):
+
+events table: {event_id, timestamp, source, entity_id*, type, text, metadata_json}
+
+entities table: {entity_id, canonical_hash, attributes_json} (attributes are non-identifying)
+
+ip_facts, device_facts, transaction_records as needed
+
+Ingest pipeline:
+
+connector → normalizer (utf8, lowercase, leet decode) → validator → message queue (Redis/Kafka optional) → staging DB.
+
+Fallback if limited: Accept CSV upload via UI; local SQLite storage if no Postgres available.
+
+3) Entity Resolution & Graph Construction
+
+Goal: Build dynamic entity graph linking accounts/devices/ips/transactions/events.
+
+Steps:
+
+Deterministic joins (hashed email domain, phone last-n digits, IP) → blocking.
+
+Probabilistic record linkage (jellyfish/string-similarity, fastText embeddings) for fuzzy matches.
+
+Graph nodes = {entity, device, ip, transaction, keyword}. Edges = {used_by, transferred_to, co-occurred}.
+
+Graph lib options:
+
+Small scale: NetworkX + node2vec (gensim).
+
+Production: Neo4j (free community) or RedisGraph; GNNs using PyTorch Geometric for advanced features.
+
+Graph features to compute: degree centrality, PageRank, community detection (Louvain), shortest path to flagged nodes.
+
+4) Feature Engineering (the meat)
+
+Temporal windows: compute features across rolling windows (1h, 24h, 7d, 30d).
+
+count_events(window), txn_volume(window), unique_countries(window), avg_interarrival_time.
+
+Behavioral features: session length distribution, device churn, new device after account dormancy.
+
+Textual features:
+
+Sentence embeddings (sentence-transformers/all-MiniLM-L6-v2).
+
+Zero-shot label scores (facebook/bart-large-mnli) for categories (violence, fraud, cyber-attack intent, political mobilization).
+
+Keyword/regex detection for critical tokens, leet/obfuscation mapping.
+
+Graph embeddings: node2vec, GraphSAGE or GNN embeddings (PyG) for structural patterns.
+
+Derived composite features: e.g., sudden_geo_jump = countries_count_24h / countries_count_30d.
+
+5) Model Architecture (hybrid, multi-branch)
+
+Design: ensemble of specialized models plus meta-fusion:
+
+a) Rule/Override Layer (deterministic safety):
+
+Critical keyword/regex blacklist (explosives, explicit violent threats). If matched → immediate analyst alert + highest priority (human review). This is a safety net, not the main logic.
+
+b) NLP classification (text intent & topic):
+
+Primary: HuggingFace zero-shot + small fine-tuned classifier (if labeled data exists).
+
+Fallback: TF-IDF + LogisticRegression.
+
+c) Behavioral anomaly detectors (unsupervised):
+
+Isolation Forest, One-Class SVM, or Autoencoder on behavioral feature vectors → anomaly score.
+
+d) Graph anomaly detection:
+
+Use metrics + GNNs to detect abnormal node behaviour or fast-evolving communities.
+
+e) Temporal forecasting:
+
+Temporal Fusion Transformer (PyTorch Forecasting) or LSTM/Transformer for event-rate forecasting.
+
+f) Meta-classifier / fusion:
+
+Input: [NLP probs, anomaly scores, graph features, temporal signals, meta-data].
+
+Model: LightGBM/XGBoost or Logistic Regression for interpretable probability outputs.
+
+Calibrate output via CalibratedClassifierCV or isotonic regression.
+
+6) Explainability, Uncertainty & Auditability
+
+SHAP for tabular and tree models (global + local).
+
+LIME / anchors for text where needed.
+
+Provide:
+
+Top contributing features (tokens, graph edges, recent events).
+
+Confidence interval / uncertainty band.
+
+Chain-of-evidence: timestamped items leading to score.
+
+Audit logs: store model version, input snapshot, decision, and reviewer outcome for each alert for accountability.
+
+7) Human-in-the-Loop Workflows
+
+Flow: System → Auto-score → Triage queue → Analyst review → Analyst verdict (confirm / dismiss / escalate).
+
+Interactive tools for analyst:
+
+Quick annotation buttons (Confirm / False Positive / Add Label).
+
+Add evidence flags and relationship edges via UI.
+
+Active learning: feed analyst-labeled cases into retraining pipeline periodically.
+
+8) UI / UX — Aesthetic & Functional (must-have)
+
+Design language: dark cyber-ops theme, clean typography, grids, microinteractions. Use TailwindCSS + React.
+
+Single-page layout:
+
+Left column: Filters & ingest controls (upload, streaming connectors).
+
+Center: Live feed / timeline visualization with stacked events (D3). Click event → detail panel.
+
+Right: Selected entity profile (risk badge, score gauge, top evidence, graph ego-view).
+
+Bottom: Analyst actions & audit log.
+
+Visual components:
+
+Risk gauge (0–100) with color gradient + numeric.
+
+Interactive ego-graph (vis.js or cytoscape.js) with draggable nodes.
+
+Timeline scrubber with play/pause to replay events.
+
+Evidence cards showing excerpts with highlighted tokens.
+
+Polish: soft shadows, rounded cards, motion for state changes, keyboard shortcuts for analyst ops.
+
+Accessibility: high contrast mode, readable fonts, responsive layout.
+
+9) Ops & Delivery (how to run)
+
+Local quickstart: docker-compose up builds services: web, api, db, redis, neo4j.
+
+Model serving: MLflow or FastAPI endpoints for inference; versions tracked in MLflow.
+
+CI/CD: GitHub Actions to run linter, unit tests, build images; model retrain pipeline as scheduled job.
+
+Monitoring: Prometheus + Grafana for infra; model drift monitoring (data drift, prediction distribution).
+
+Backups & retention: encrypted backups of DB & model artifacts; retention policy for logs and PII.
+
+10) Acceptance Tests & KPIs (concrete)
+
+Functional tests:
+
+test_001: Explicit threat text ("I will bomb the parliament") → score >= 90, level = HIGH, evidence references token "bomb" and shows timeline.
+
+test_002: Ambiguous political text ("support X policy") → score <= 40, appropriate label political_*.
+
+test_003: Obfuscated threats ("b0mb the govt") → still flagged by leet decoding / regex.
+
+test_004: Graph anomaly (rapid fund circular flow) → anomaly score high, flagged.
+
+Performance: End-to-end inference < 2s for single item (CPU friendly); batch scoring throughput defined for deploy target.
+
+Explainability: SHAP top-3 features displayed for every alert.
+
+Human review metric: 95% of system-high alerts must be actionable (low noise) after initial tuning.
+
+Privacy: No raw PII stored; only hashed/pseudonymous identifiers.
+
+Deliverables (what you should get)
+
+Repo with docker-compose.yml, README and single-command run instructions.
+
+Backend (FastAPI) with /ingest, /analyze, /entities, /alerts.
+
+Frontend (React) with the described aesthetic dashboard.
+
+Core models: NLP zero-shot + behavioral anomaly + meta-fusion model (with saved artifacts).
+
+Tests and test data (including adversarial phrases).
+
+Documentation: data contracts, ethics & legal checklist, retraining guide.
+
+Implementation notes & free-tool fallback plan (no money)
+
+NLP: HuggingFace Transformers (CPU) — facebook/bart-large-mnli for zero-shot. If CPU/space limited → use sentence-transformers/all-MiniLM-L6-v2 + TF-IDF baseline.
+
+Graph: NetworkX + node2vec for dev; Neo4j community for production.
+
+Models: LightGBM / XGBoost for meta model (fast & interpretable) — fallback to LogisticRegression if resources constrained.
+
+UI: React + Tailwind + cytoscape.js. If team short on frontend work → Streamlit for a prototype only (but prefer React for production feel).
+
+Storage: Postgres (or SQLite for tiny demos). Neo4j optional.
+
+Model registry: MLflow (free) or simple S3/FS storage with versioned filenames.
+
+Final safety & handoff clause (must be included in contract)
+
+No individual criminal prediction: The product must explicitly log that it does not predict future crimes for named individuals; only risk scenarios and patterns for analyst review.
+
+Human oversight: Every automated HIGH flag must be routed to a human analyst before any automated action.
+
+Data minimization: Only ingest what you are legally allowed to ingest; provide data deletion & audit features.
