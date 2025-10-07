@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dowry Calculator Pro (Parody Edition) </title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <div class=container>
+    <header class=header>
+      <h1> Dowry Calculator Pro</h1>
+      <p class=subtitle>The Most Accurate* Marriage Market Valuation Tool</p>
+      <p class=disclaimer>*Parody. Exposes absurd social biases via satire.</p>
+    </header>
+
+    <main class=grid>
+      <section class=card>
+        <h2>Inputs</h2>
+        <div class=form>
+          <label>Name <input id=name placeholder="Used for seeded meme RNG"></label>
+          <label title="Age curve: hype early, discounts later">Age <input id=age type=number min=16 max=70 value=25></label>
+          <label title="Genetics Lootbox: under 5'0 debuff, 6'0+ buff">Height
+            <select id=height>
+              <option value=under5>Under 5'0"</option>
+              <option value=5to54>5'0"–5'4"</option>
+              <option value=55to6 selected>5'5"–6'0"</option>
+              <option value=over6>6'0"+</option>
+            </select>
+          </label>
+          <label title="Mocking colorism multipliers">Skin Tone
+            <select id=skin>
+              <option value=albino>Albino</option>
+              <option value=fair selected>Fair</option>
+              <option value=wheatish>Wheatish</option>
+              <option value=dark>Dark</option>
+            </select>
+          </label>
+          <label title="Fitness patch notes: normal gets a buff">BMI
+            <select id=bmi>
+              <option value=under>Underweight</option>
+              <option value=normal selected>Normal</option>
+              <option value=over>Overweight</option>
+              <option value=obese>Obese</option>
+            </select>
+          </label>
+          <label title="MBA adds synergy tax, PhD suffers overqualified curse">Education
+            <select id=edu>
+              <option value=dropout>Dropout</option>
+              <option value=ba>BA/BA Hons</option>
+              <option value=btech selected>BTech/Engineering</option>
+              <option value=mba>MBA</option>
+              <option value=phd>PhD</option>
+              <option value=iit>IIT/IIM</option>
+            </select>
+          </label>
+          <label title="Artist paid in exposure; IAS gets prestige expansion">Profession
+            <select id=prof>
+              <option value=doctor>Doctor</option>
+              <option value=ias>IAS/IPS</option>
+              <option value=software selected>Software Engineer</option>
+              <option value=startup>Startup Founder</option>
+              <option value=artist>Artist/Musician</option>
+              <option value=influencer>Influencer</option>
+              <option value=politician>PoliticianChild</option>
+              <option value=other>Other</option>
+            </select>
+          </label>
+          <label title="Parody XP multiplier system">Caste
+            <select id=caste>
+              <option value=upper selected>Upper</option>
+              <option value=middle>Middle</option>
+              <option value=lower>Lower</option>
+              <option value=outcaste>Outcaste</option>
+            </select>
+          </label>
+          <label title="Minority nerf, majority buff (satire)">Religion
+            <select id=religion>
+              <option value=majority selected>Majority</option>
+              <option value=minority>Minority</option>
+              <option value=convert>Convert</option>
+            </select>
+          </label>
+          <label title="Astrology DLC toggles">Horoscope
+            <select id=astro>
+              <option value=none selected>None</option>
+              <option value=manglik>Manglik</option>
+              <option value=matching>Matching Kundali</option>
+              <option value=mars7>Mars in 7th</option>
+              <option value=rahu>Rahu/Ketu</option>
+              <option value=guru9>Guru in 9th</option>
+              <option value=shani>Shani Sade Sati</option>
+              <option value=random>Random astrologer note</option>
+            </select>
+          </label>
+          <label title="Some countries come with premium/penalty">NRI
+            <select id=nri>
+              <option value=none selected>Not NRI</option>
+              <option value=us>US/Canada</option>
+              <option value=uk>UK</option>
+              <option value=dubai>Dubai</option>
+              <option value=africa>Africa</option>
+              <option value=australia>Australia</option>
+            </select>
+          </label>
+          <label title="Dynasty premium and subsidy tax">Family wealth
+            <select id=wealth>
+              <option value=middle selected>Middle class</option>
+              <option value=landlord>Landlord/Zamindar</option>
+              <option value=business>Business tycoon</option>
+              <option value=farmer>Farmer</option>
+              <option value=politician>Politician family</option>
+            </select>
+          </label>
+          <label title="Metro 2BHK and BMW buffs">Assets
+            <select id=asset>
+              <option value=none selected>None</option>
+              <option value=house>Own house</option>
+              <option value=bhk>2BHK metro</option>
+              <option value=iphone>iPhone latest</option>
+              <option value=maruti>Car (Maruti)</option>
+              <option value=bmw>Car (BMW)</option>
+            </select>
+          </label>
+          <label title="Metro premium, rural discount">Region
+            <select id=region>
+              <option value="" selected>— Select —</option>
+              <option value=metro>Metro</option>
+              <option value=tier2>Tier-2</option>
+              <option value=rural>Rural</option>
+            </select>
+          </label>
+          <label title="Influence meter: 10k/100k thresholds">Social followers
+            <input id=followers type=number min=0 step=100 placeholder="e.g. 12000">
+          </label>
+          <label title="Shared inheritance anxiety per sibling">Siblings
+            <input id=siblings type=number min=0 value=0>
+          </label>
+          <fieldset class=checks>
+            <label><input id=faang type=checkbox> FAANG engineer</label>
+            <label><input id=smoker type=checkbox> Smoker</label>
+            <label><input id=teetotal type=checkbox> Teetotaller</label>
+            <label><input id=cook type=checkbox> Can cook</label>
+            <label><input id=pet type=checkbox> Pet owner</label>
+            <label><input id=eldest type=checkbox> Eldest child</label>
+            <label><input id=gold type=checkbox> Extra gold chain</label>
+            <label><input id=wedding type=checkbox> Wedding season surge</label>
+          </fieldset>
+          <fieldset class=checks>
+            <label><input id=cracked type=checkbox> Cracked iPhone</label>
+            <label><input id=crypto type=checkbox> Into crypto</label>
+            <label><input id=excel type=checkbox> Excel shortcut god</label>
+            <label><input id=astrol type=checkbox> Astrology believer</label>
+            <label><input id=gym type=checkbox> Gym selfies</label>
+            <label><input id=pubg type=checkbox> PUBG addiction</label>
+          </fieldset>
+          <button id=calc class=btn type=button>Calculate </button>
+        </div>
+      </section>
+
+      <section id=invoiceCard class=card>
+        <h2>Invoice Breakdown</h2>
+        <div id=output class=output>
+          <div class=muted>Fill inputs and hit Calculate.</div>
+        </div>
+        <div class=actions>
+          <button id=share class="btn btn-secondary" type=button>Generate Meme Card </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+  <script src="data.js?v=1" defer></script>
+  <script src="calculator.js?v=1" defer></script>
+</body>
+</html>
