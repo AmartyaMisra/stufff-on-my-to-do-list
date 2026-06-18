@@ -1,0 +1,37 @@
+================================================================
+COUNCIL OF SIX - LICENSE
+================================================================
+
+Copyright (c) 2024-2025. All Rights Reserved.
+
+PROVIDED "AS-IS" FOR EDUCATIONAL USE ONLY.
+
+PERMITTED:
+✓ Personal experimentation
+✓ Academic research
+✓ Creative projects
+
+PROHIBITED:
+✗ Commercial use without permission
+✗ Illegal activities
+✗ Harmful content generation
+✗ Distribution claiming original authorship
+
+DISCLAIMER:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+AUTHORS NOT LIABLE FOR ANY DAMAGES OR MISUSE.
+
+All AI-generated content is fictional and should not be used
+for critical decisions. Personas are characters, not advisors.
+
+Third-party components (Mistral AI, llama.cpp) subject to
+their respective licenses.
+
+CHARACTER INSPIRATIONS:
+Characters inspired by fictional media properties. This is a
+transformative work for educational purposes. No affiliation
+with or endorsement by original copyright holders.
+
+BY USING THIS SOFTWARE, YOU ACCEPT THESE TERMS.
+
+================================================================
