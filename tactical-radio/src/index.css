@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --color-tactical-green: #00ff00;
+  --color-tactical-dark: #0a0a0a;
+  --color-tactical-dim: #004400;
+  --color-tactical-grid: #002200;
+  --color-tactical-text: #ccffcc;
+  --color-tactical-highlight: #00ff00;
+
+  --font-mono: "Courier New", monospace;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-scanline: scanline 8s linear infinite;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-tactical-text font-mono overflow-hidden;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+  }
+
+  .border-glow {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  }
+
+  .crt-overlay {
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+  }
+
+  .vignette {
+    background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%);
+    pointer-events: none;
+  }
+
+  /* CUSTOM SCROLLBAR - CHUNKY GREEN */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+    background: #001100;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #004400;
+    border: 1px solid #00ff00;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #006600;
+  }
+
+  /* RANGE SLIDER STYLING */
+  input[type=range] {
+    -webkit-appearance: none;
+    background: transparent;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #00ff00;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 0 10px #00ff00;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #004400;
+    border-radius: 2px;
+  }
+}
