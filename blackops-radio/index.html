@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlackOps Radio Globe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Bar -->
+    <div id="topBar">
+      <div id="logo">⬢ BLACKOPS RADIO</div>
+      <div id="controls">
+        <button class="mode-btn active" data-mode="news">📰 NEWS</button>
+        <button class="mode-btn" data-mode="music">🎵 MUSIC</button>
+        <input type="text" id="searchInput" placeholder="🔍 Search station or country..." />
+        <button id="filterBtn" class="icon-btn" title="Filter Stations">🎛️</button>
+        <button id="volumeBtn" class="icon-btn" title="Volume">🔊</button>
+      </div>
+      <div id="windowControls">
+        <button id="minimizeBtn">_</button>
+        <button id="closeBtn">✕</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+      <!-- Globe Container -->
+      <div id="globeContainer">
+        <!-- Globe Stats Overlay -->
+        <div id="globeStats">
+          <div class="stat-item">
+            <span class="stat-label">STATIONS:</span>
+            <span class="stat-value" id="stationCount">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">MODE:</span>
+            <span class="stat-value" id="currentModeLabel">NEWS</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">ZOOM:</span>
+            <span class="stat-value" id="zoomLevel">100%</span>
+          </div>
+        </div>
+        
+        <!-- Globe Controls -->
+        <div id="globeControls">
+          <button class="globe-btn" id="resetViewBtn" title="Reset View">🎯</button>
+          <button class="globe-btn" id="zoomInBtn" title="Zoom In">+</button>
+          <button class="globe-btn" id="zoomOutBtn" title="Zoom Out">-</button>
+          <button class="globe-btn" id="rotateToggle" title="Toggle Auto-Rotate">⟲</button>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div id="rightPanel">
+        <!-- Oscilloscope -->
+        <div id="oscilloscope">
+          <canvas id="waveCanvas"></canvas>
+          <div id="audioInfo">
+            <span id="bitrate">-- kbps</span>
+            <span id="codec">--</span>
+          </div>
+        </div>
+        
+        <!-- Station Info Card -->
+        <div id="stationInfo">
+          <div id="stationName">Select a station</div>
+          <div id="stationCountry"></div>
+          <div id="stationTags"></div>
+          <div id="nowPlaying">
+            <span id="npLabel">NOW PLAYING:</span>
+            <span id="npText">...</span>
+          </div>
+        </div>
+
+        <!-- Player Controls -->
+        <div id="playerControls">
+          <button id="prevBtn" title="Previous Station">⏮</button>
+          <button id="playBtn" title="Play/Pause">▶</button>
+          <button id="nextBtn" title="Next Station">⏭</button>
+          <button id="favBtn" title="Add to Favorites">★</button>
+          <button id="shareBtn" title="Share Station">📤</button>
+        </div>
+
+        <!-- Volume Control -->
+        <div id="volumeControl">
+          <span class="volume-icon">🔊</span>
+          <input type="range" id="volumeSlider" min="0" max="100" value="80" />
+          <span id="volumePercent">80%</span>
+        </div>
+
+        <!-- Quick Filters -->
+        <div id="quickFilters">
+          <button class="filter-tag">🌍 All</button>
+          <button class="filter-tag">🇺🇸 USA</button>
+          <button class="filter-tag">🇬🇧 UK</button>
+          <button class="filter-tag">🇫🇷 France</button>
+          <button class="filter-tag">🇮🇳 India</button>
+          <button class="filter-tag">⭐ Favorites</button>
+        </div>
+
+        <!-- Status Log -->
+        <div id="statusLog"></div>
+      </div>
+    </div>
+
+    <!-- Volume Panel (Hidden) -->
+    <div id="volumePanel" class="hidden">
+      <h3>🔊 Volume Control</h3>
+      <input type="range" id="volumePanelSlider" min="0" max="100" value="80" />
+      <div id="volumeDisplay">80%</div>
+      <button id="muteBtn">🔇 Mute</button>
+    </div>
+
+    <!-- Filter Panel (Hidden) -->
+    <div id="filterPanel" class="hidden">
+      <h3>🎛️ Filter Stations</h3>
+      <div class="filter-section">
+        <label>By Country:</label>
+        <select id="countryFilter">
+          <option value="">All Countries</option>
+        </select>
+      </div>
+      <div class="filter-section">
+        <label>Quality:</label>
+        <select id="qualityFilter">
+          <option value="">All</option>
+          <option value="high">High (128+ kbps)</option>
+          <option value="medium">Medium (64-128 kbps)</option>
+        </select>
+      </div>
+      <button id="applyFilterBtn">Apply</button>
+    </div>
+  </div>
+
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="globe_v3_renderer.js"></script>
+</body>
+</html>
