@@ -1,0 +1,12 @@
+{
+  "timestamp": "2024-01-15T10:30:00Z",
+  "dm": 856.5,
+  "snr": 45.2,
+  "width_ms": 2.5,
+  "frequency_mhz": 600.0,
+  "ra": 45.5,
+  "dec": -12.3,
+  "telescope": "CHIME",
+  "source": "CHIME/FRB"
+}
+

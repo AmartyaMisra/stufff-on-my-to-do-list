@@ -1,0 +1,13 @@
+{
+  "timestamp": "2024-01-15T18:00:00Z",
+  "event_id": "IC240115A",
+  "ra": 200.3,
+  "dec": 15.7,
+  "energy_gev": 250000.0,
+  "detector": "IceCube",
+  "event_type": "track",
+  "angular_error": 0.5,
+  "signalness": 0.85,
+  "source": "IceCube"
+}
+

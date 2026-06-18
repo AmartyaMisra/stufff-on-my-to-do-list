@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gravitational_wave_event>
+  <event_id>GW240115</event_id>
+  <timestamp>2024-01-15T16:00:00Z</timestamp>
+  <ra>180.5</ra>
+  <dec>-30.2</dec>
+  <distance_mpc>450.0</distance_mpc>
+  <chirp_mass>28.5</chirp_mass>
+  <snr>25.3</snr>
+  <detector>LIGO-Virgo</detector>
+  <mass1>35.2</mass1>
+  <mass2>28.8</mass2>
+  <merger_time>2024-01-15T16:00:00Z</merger_time>
+  <source>LIGO</source>
+</gravitational_wave_event>
+
